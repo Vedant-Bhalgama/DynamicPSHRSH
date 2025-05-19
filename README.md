@@ -14,7 +14,7 @@
 
 ```
 git clone https://github.com/Vedant-Bhalgama/DynamicPSHRSH.git
-Import-Module .\DynamicPSHRSH.ps1
+Import-Module .\DynamicPSHRSHGen.ps1
 Invoke-DynamicRSH
 ```
 
