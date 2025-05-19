@@ -1,4 +1,4 @@
 # DynamicPSHRSH
-A custom PowerShell script for generating a reverse shell which is dynamically obfuscated each time it is ran
+A nice little PowerShell script I wrote for generating a Powershell based reverse-shell that is obfuscated dynamically everytime it is ran using a set of specific obfuscation techniques
 
-![image](https://github.com/user-attachments/assets/b6a185c6-cd45-4b75-8e6b-10d52fdcaf79)
+![image](https://github.com/user-attachments/assets/87082673-96ea-4c2f-8391-42b34f5fa509)
